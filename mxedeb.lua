@@ -109,16 +109,20 @@ local function buildPackage(pkg)
     return new_files
 end
 
+local function saveFileList(pkg, list)
+    local list_file = pkg .. '.list'
+    local file = io.open(list_file, 'w')
+    for _, installed_file in ipairs(list) do
+        file:write(installed_file .. '\n')
+    end
+    file:close()
+end
+
 -- build all packages, save filelist to file #pkg.list
 local function buildPackages(pkgs)
     for _, pkg in ipairs(pkgs) do
         local files = buildPackage(pkg)
-        local fname = pkg .. '.list'
-        local file = io.open(fname, 'w')
-        for _, installed_file in ipairs(files) do
-            file:write(installed_file .. '\n')
-        end
-        file:close()
+        saveFileList(pkg, files)
     end
 end
 
