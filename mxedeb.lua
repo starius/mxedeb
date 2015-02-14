@@ -86,11 +86,43 @@ local function dependencyGraph(pkgs, pkg2deps)
     return graph
 end
 
+-- return packages ordered in build order
+-- this means, if pkg1 depends on pkg2, then
+-- pkg2 preceeds pkg1 in the list
+local function sortForBuild(pkgs, pkg2deps)
+    -- use sommand tsort
+    local tsort_input_fname = os.tmpname()
+    local tsort_input = io.open(tsort_input_fname, 'w')
+    for _, pkg1 in ipairs(pkgs) do
+        for _, pkg2 in ipairs(pkg2deps[pkg1]) do
+            tsort_input:write(pkg2 .. ' ' .. pkg1 .. '\n')
+        end
+    end
+    tsort_input:close()
+    --
+    local build_list = {}
+    local tsort = io.popen('tsort ' .. tsort_input_fname, 'r')
+    for line in tsort:lines() do
+        local pkg = trim(line)
+        table.insert(build_list, pkg)
+    end
+    tsort:close()
+    os.remove(tsort_input_fname)
+    return build_list
+end
+
 local pkgs, pkg2deps = pkgsAndDeps()
 local graph = dependencyGraph(pkgs, pkg2deps)
+local build_list = sortForBuild(pkgs, pkg2deps)
 
+print("Dependency graph:")
 for pkg1, deps in pairs(graph) do
     for pkg2, _ in pairs(deps) do
         print(pkg1, pkg2)
     end
+end
+
+print("Build list:")
+for _, pkg in ipairs(build_list) do
+    print(pkg)
 end
