@@ -82,10 +82,44 @@ local function sortForBuild(pkgs, pkg2deps)
     return build_list
 end
 
+-- return set of all filepaths under ./usr/
+local function findFiles()
+    local files = {}
+    local find = io.popen('find usr -type f', 'r')
+    for line in find:lines() do
+        local file = trim(line)
+        files[file] = true
+    end
+    find:close()
+    return files
+end
+
+-- builds package, returns list of new files
+local function buildPackage(pkg)
+    local files_before = findFiles()
+    os.execute('make ' .. pkg)
+    local files_after = findFiles()
+    local new_files = {}
+    for file in pairs(files_after) do
+        if not files_before[file] then
+            table.insert(new_files, file)
+        end
+    end
+    assert(#new_files > 0)
+    return new_files
+end
+
 local pkgs, pkg2deps = pkgsAndDeps()
 local build_list = sortForBuild(pkgs, pkg2deps)
 
 print("Build list:")
 for _, pkg in ipairs(build_list) do
     print(pkg)
+end
+
+os.execute('make clean')
+local binutils_files = buildPackage('binutils')
+print("List of files in package binutils:")
+for _, file in ipairs(binutils_files) do
+    print(file)
 end
