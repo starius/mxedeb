@@ -65,11 +65,41 @@ print-%-deps:
     return pkg2deps
 end
 
+-- return list of direct and indirect dependencies
+local function recursiveDeps(pkg, pkg2deps)
+    local deps = {}
+    local direct_deps = assert(pkg2deps[pkg])
+    for _, pkg1 in ipairs(direct_deps) do
+        table.insert(deps, pkg1)
+        for _, pkg2 in ipairs(recursiveDeps(pkg1, pkg2deps)) do
+            table.insert(deps, pkg2)
+        end
+    end
+    return deps
+end
+
+-- return two-dimensional table
+-- local graph = recursiveDeps(pkgs, pkg2deps)
+-- graph[pkg1][pkg2] -- if pkg2 is needed for pkg1
+-- (e.g., if pkg1 depends on pkg2, which depends on pkg3,
+-- then graph[pkg1][pkg3] is true)
+local function dependencyGraph(pkgs, pkg2deps)
+    local graph = {}
+    for _, pkg in ipairs(pkgs) do
+        graph[pkg] = {}
+        for _, pkg1 in ipairs(recursiveDeps(pkg, pkg2deps)) do
+            graph[pkg][pkg1] = true
+        end
+    end
+    return graph
+end
+
 local pkgs = allPackages()
 local pkg2deps = allDeps(pkgs)
+local graph = dependencyGraph(pkgs, pkg2deps)
 
-for pkg, deps in pairs(pkg2deps) do
-    for _, dep in ipairs(deps) do
-        print(pkg, dep)
+for pkg1, deps in pairs(graph) do
+    for pkg2, _ in pairs(deps) do
+        print(pkg1, pkg2)
     end
 end
