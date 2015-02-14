@@ -109,17 +109,20 @@ local function buildPackage(pkg)
     return new_files
 end
 
+-- build all packages, save filelist to file #pkg.list
+local function buildPackages(pkgs)
+    for _, pkg in ipairs(pkgs) do
+        local files = buildPackage(pkg)
+        local fname = pkg .. '.list'
+        local file = io.open(fname, 'w')
+        for _, installed_file in ipairs(files) do
+            file:write(installed_file .. '\n')
+        end
+        file:close()
+    end
+end
+
 local pkgs, pkg2deps = pkgsAndDeps()
 local build_list = sortForBuild(pkgs, pkg2deps)
-
-print("Build list:")
-for _, pkg in ipairs(build_list) do
-    print(pkg)
-end
-
 os.execute('make clean')
-local binutils_files = buildPackage('binutils')
-print("List of files in package binutils:")
-for _, file in ipairs(binutils_files) do
-    print(file)
-end
+buildPackages(build_list)
