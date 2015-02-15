@@ -29,32 +29,45 @@ local function trim(str)
     return text
 end
 
--- return list of table and map from package to list of deps
-local function pkgsAndDeps()
+-- return several table describing packages
+-- * list of packages
+-- * map from package to list of deps
+-- * map from package to version of package
+local function getPkgs()
     -- create file deps.mk showing deps
     -- (make show-upstream-deps-% does not present in
     -- stable MXE)
     local deps_mk_content = [[
 include Makefile
+NOTHING:=
+SPACE:=$(NOTHING) $(NOTHING)
+NAME_WITH_UNDERSCORES:=$(subst $(SPACE),_,$(NAME))
 print-deps:
-	@$(foreach pkg,$(PKGS),echo $(pkg) $($(pkg)_DEPS);)]]
+	@$(foreach pkg,$(PKGS),echo \
+		$(pkg) \
+		$(subst $(SPACE),-,$($(pkg)_VERSION)) \
+		$($(pkg)_DEPS);)]]
     local deps_mk_file = io.open('deps.mk', 'w')
     deps_mk_file:write(deps_mk_content)
     deps_mk_file:close()
-    local pkg2deps = {}
     local pkgs = {}
+    local pkg2deps = {}
+    local pkg2ver = {}
     local cmd = 'make -f deps.mk print-deps'
     local make = io.popen(cmd)
     for line in make:lines() do
         local deps = split(trim(line))
         -- first value is name of package which depends on
         local pkg = table.remove(deps, 1)
-        pkg2deps[pkg] = deps
+        -- second value is version of package
+        local ver = table.remove(deps, 1)
         table.insert(pkgs, pkg)
+        pkg2deps[pkg] = deps
+        pkg2ver[pkg] = ver
     end
     make:close()
     os.remove('deps.mk')
-    return pkgs, pkg2deps
+    return pkgs, pkg2deps, pkg2ver
 end
 
 -- return packages ordered in build order
@@ -126,7 +139,7 @@ local function buildPackages(pkgs)
     end
 end
 
-local pkgs, pkg2deps = pkgsAndDeps()
+local pkgs, pkg2deps, pkg2ver = getPkgs()
 local build_list = sortForBuild(pkgs, pkg2deps)
 os.execute('make clean')
 buildPackages(build_list)
