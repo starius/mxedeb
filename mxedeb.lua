@@ -168,7 +168,8 @@ local function makeDeb(pkg, list_path, deps, ver)
     local deb_pkg = nameToDebian(pkg)
     local dirname = ('%s_%s'):format(deb_pkg,
         protectVersion(ver))
-    local usr = ('%s/usr/lib/mxe/%s'):format(dirname, mxever)
+    local usr = '%s/usr/lib/mxe/%s_%s'
+    usr = usr:format(dirname, mxever, target)
     os.execute(('mkdir -p %s'):format(usr))
     -- use tar to copy files with paths
     local cmd = 'tar -T %s --owner=0 --group=0 -cf - | ' ..
