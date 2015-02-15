@@ -126,8 +126,10 @@ local function buildPackage(pkg)
 end
 
 local function nameToDebian(pkg)
-    pkg = pkg:gsub('_', '-')
-    return ('mxe%s-%s-%s'):format(mxever, target, pkg)
+    local name = 'mxe%s-%s-%s'
+    name = name:format(mxever, target, pkg)
+    name = name:gsub('_', '-')
+    return name
 end
 
 local function protectVersion(ver)
