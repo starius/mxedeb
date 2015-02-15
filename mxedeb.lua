@@ -1,5 +1,6 @@
 local target = os.getenv('MXE_TARGETS') or 'i686-pc-mingw32'
 local mxever = os.getenv('MXE_VERSION') or '2.23'
+local jobs = os.getenv('MXE_jobs') or '2'
 
 -- based on http://lua-users.org/wiki/SplitJoin
 local function split(self, sep, nMax, plain)
@@ -114,7 +115,8 @@ end
 -- builds package, returns list of new files
 local function buildPackage(pkg)
     local files_before = findFiles()
-    os.execute('make ' .. pkg .. ' MXE_TARGETS=' .. target)
+    local cmd = 'make %s MXE_TARGETS=%s --jobs=%s'
+    os.execute(cmd:format(pkg, target, jobs))
     local files_after = findFiles()
     local new_files = {}
     for file in pairs(files_after) do
