@@ -1,6 +1,7 @@
 local target = os.getenv('MXE_TARGETS') or 'i686-pc-mingw32'
 local mxever = os.getenv('MXE_VERSION') or '2.23'
 local jobs = os.getenv('MXE_jobs') or '2'
+local max_packages = tonumber(os.getenv('MXE_MAX_PACKAGES'))
 
 -- based on http://lua-users.org/wiki/SplitJoin
 local function split(self, sep, nMax, plain)
@@ -226,6 +227,11 @@ end
 
 local pkgs, pkg2deps, pkg2ver = getPkgs()
 local build_list = sortForBuild(pkgs, pkg2deps)
+if max_packages then
+    while #build_list > max_packages do
+        table.remove(build_list)
+    end
+end
 local cmd = 'make clean MXE_TARGETS=%s'
 os.execute(cmd:format(target))
 buildPackages(build_list)
