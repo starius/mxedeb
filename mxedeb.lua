@@ -1,5 +1,5 @@
-local target = 'i686-pc-mingw32'
-local mxever = '2.23'
+local target = os.getenv('MXE_TARGETS') or 'i686-pc-mingw32'
+local mxever = os.getenv('MXE_VERSION') or '2.23'
 
 -- based on http://lua-users.org/wiki/SplitJoin
 local function split(self, sep, nMax, plain)
