@@ -26,7 +26,7 @@ build_for_target mxestable i686-pc-mingw32
 build_for_target mxestable x86_64-w64-mingw32
 build_for_target mxestable i686-w64-mingw32
 
-export MXE_VERSION=trunc
+export MXE_VERSION=trunk
 build_for_target mxemaster i686-w64-mingw32.static
 build_for_target mxemaster x86_64-w64-mingw32.static
 build_for_target mxemaster i686-w64-mingw32.shared
