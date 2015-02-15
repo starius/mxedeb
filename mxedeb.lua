@@ -1,3 +1,6 @@
+local target = 'i686-pc-mingw32'
+local mxever = '2.23'
+
 -- based on http://lua-users.org/wiki/SplitJoin
 local function split(self, sep, nMax, plain)
     if not sep then
@@ -122,6 +125,66 @@ local function buildPackage(pkg)
     return new_files
 end
 
+local function nameToDebian(pkg)
+    pkg = pkg:gsub('_', '-')
+    return ('mxe%s-%s-%s'):format(mxever, target, pkg)
+end
+
+local function protectVersion(ver)
+    ver = ver:gsub('_', '-')
+    if ver:sub(1, 1):match('%d') then
+        return ver
+    else
+        -- version number does not start with digit
+        return '0.' .. ver
+    end
+end
+
+local CONTROL = [[Package: %s
+Version: %s
+Section: devel
+Priority: optional
+Architecture: all
+Depends: %s
+Maintainer: Boris Nagaev <bnagaev@gmail.com>
+Homepage: http://mxe.cc
+Description: MXE %s package %s for %s
+ MXE (M cross environment) is a Makefile that compiles
+ a cross compiler and cross compiles many free libraries
+ such as SDL and Qt for various target platforms (MinGW).
+ .
+ This package contains the files for MXE package %s.
+]]
+
+local function makeDeb(pkg, list_path, deps, ver)
+    local deb_pkg = nameToDebian(pkg)
+    local dirname = ('%s_%s'):format(deb_pkg,
+        protectVersion(ver))
+    os.execute(('mkdir -p %s'):format(dirname))
+    -- use tar to copy files with paths
+    local cmd = 'tar -T %s --owner=0 --group=0 -cf - | ' ..
+        'fakeroot -s deb.fakeroot tar -C %s -xf -'
+    os.execute(cmd:format(list_path, dirname))
+    -- prepare dependencies
+    local deb_deps = {}
+    for _, dep in ipairs(deps) do
+        table.insert(deb_deps, nameToDebian(dep))
+    end
+    local deb_deps_str = table.concat(deb_deps, ', ')
+    -- make DEBIAN/control file
+    os.execute(('mkdir -p %s/DEBIAN'):format(dirname))
+    local control_fname = dirname .. '/DEBIAN/control'
+    local control = io.open(control_fname, 'w')
+    control:write(CONTROL:format(deb_pkg, protectVersion(ver),
+        deb_deps_str, mxever, pkg, target, pkg))
+    control:close()
+    -- make .deb file
+    local cmd = 'fakeroot -i deb.fakeroot dpkg-deb -b %s'
+    os.execute(cmd:format(dirname))
+    -- cleanup
+    os.execute(('rm -fr %s deb.fakeroot'):format(dirname))
+end
+
 local function saveFileList(pkg, list)
     local list_file = pkg .. '.list'
     local file = io.open(list_file, 'w')
@@ -139,7 +202,16 @@ local function buildPackages(pkgs)
     end
 end
 
+local function makeDebs(pkgs, pkg2deps, pkg2ver)
+    for _, pkg in ipairs(pkgs) do
+        local deps = assert(pkg2deps[pkg], pkg)
+        local ver = assert(pkg2ver[pkg], pkg)
+        makeDeb(pkg, pkg .. '.list', deps, ver)
+    end
+end
+
 local pkgs, pkg2deps, pkg2ver = getPkgs()
 local build_list = sortForBuild(pkgs, pkg2deps)
 os.execute('make clean')
 buildPackages(build_list)
+makeDebs(build_list, pkg2deps, pkg2ver)
