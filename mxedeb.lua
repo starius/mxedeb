@@ -48,7 +48,7 @@ SPACE:=$(NOTHING) $(NOTHING)
 NAME_WITH_UNDERSCORES:=$(subst $(SPACE),_,$(NAME))
 print-deps:
 	@$(foreach pkg,$(PKGS),echo \
-		$(pkg) \
+		for-mxedeb $(pkg) \
 		$(subst $(SPACE),-,$($(pkg)_VERSION)) \
 		$($(pkg)_DEPS);)]]
     local deps_mk_file = io.open('deps.mk', 'w')
@@ -62,13 +62,17 @@ print-deps:
     local make = io.popen(cmd)
     for line in make:lines() do
         local deps = split(trim(line))
-        -- first value is name of package which depends on
-        local pkg = table.remove(deps, 1)
-        -- second value is version of package
-        local ver = table.remove(deps, 1)
-        table.insert(pkgs, pkg)
-        pkg2deps[pkg] = deps
-        pkg2ver[pkg] = ver
+        if deps[1] == 'for-mxedeb' then
+            -- first value is marker 'for-mxedeb'
+            table.remove(deps, 1)
+            -- first value is name of package which depends on
+            local pkg = table.remove(deps, 1)
+            -- second value is version of package
+            local ver = table.remove(deps, 1)
+            table.insert(pkgs, pkg)
+            pkg2deps[pkg] = deps
+            pkg2ver[pkg] = ver
+        end
     end
     make:close()
     os.remove('deps.mk')
