@@ -56,7 +56,8 @@ print-deps:
     local pkgs = {}
     local pkg2deps = {}
     local pkg2ver = {}
-    local cmd = 'make -f deps.mk print-deps'
+    local cmd = 'make -f deps.mk print-deps MXE_TARGETS=%s'
+    cmd = cmd:format(target)
     local make = io.popen(cmd)
     for line in make:lines() do
         local deps = split(trim(line))
@@ -113,7 +114,7 @@ end
 -- builds package, returns list of new files
 local function buildPackage(pkg)
     local files_before = findFiles()
-    os.execute('make ' .. pkg)
+    os.execute('make ' .. pkg .. ' MXE_TARGETS=' .. target)
     local files_after = findFiles()
     local new_files = {}
     for file in pairs(files_after) do
@@ -218,6 +219,7 @@ end
 
 local pkgs, pkg2deps, pkg2ver = getPkgs()
 local build_list = sortForBuild(pkgs, pkg2deps)
-os.execute('make clean')
+local cmd = 'make clean MXE_TARGETS=%s'
+os.execute(cmd:format(target))
 buildPackages(build_list)
 makeDebs(build_list, pkg2deps, pkg2ver)
