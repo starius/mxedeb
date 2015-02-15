@@ -144,8 +144,7 @@ local CONTROL = [[Package: %s
 Version: %s
 Section: devel
 Priority: optional
-Architecture: all
-Depends: %s
+Architecture: all%s
 Maintainer: Boris Nagaev <bnagaev@gmail.com>
 Homepage: http://mxe.cc
 Description: MXE %s package %s for %s
@@ -170,7 +169,11 @@ local function makeDeb(pkg, list_path, deps, ver)
     for _, dep in ipairs(deps) do
         table.insert(deb_deps, nameToDebian(dep))
     end
-    local deb_deps_str = table.concat(deb_deps, ', ')
+    local deb_deps_str = ''
+    if #deb_deps > 0 then
+        local str = table.concat(deb_deps, ', ')
+        deb_deps_str = '\nDepends: ' .. str
+    end
     -- make DEBIAN/control file
     os.execute(('mkdir -p %s/DEBIAN'):format(dirname))
     local control_fname = dirname .. '/DEBIAN/control'
