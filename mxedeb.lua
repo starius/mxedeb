@@ -1,7 +1,6 @@
 #!/usr/bin/env lua
 
 local target = os.getenv('MXE_TARGETS') or 'i686-pc-mingw32'
-local mxever = os.getenv('MXE_VERSION') or '2.23'
 local jobs = os.getenv('MXE_jobs') or '2'
 local max_packages = tonumber(os.getenv('MXE_MAX_PACKAGES'))
 
@@ -136,8 +135,8 @@ local function buildPackage(pkg)
 end
 
 local function nameToDebian(pkg)
-    local name = 'mxe%s-%s-%s'
-    name = name:format(mxever, target, pkg)
+    local name = 'mxe-%s-%s'
+    name = name:format(target, pkg)
     name = name:gsub('_', '-')
     return name
 end
@@ -159,7 +158,7 @@ Priority: optional
 Architecture: all%s
 Maintainer: Boris Nagaev <bnagaev@gmail.com>
 Homepage: http://mxe.cc
-Description: MXE %s package %s for %s
+Description: MXE package %s for %s
  MXE (M cross environment) is a Makefile that compiles
  a cross compiler and cross compiles many free libraries
  such as SDL and Qt for various target platforms (MinGW).
@@ -171,8 +170,8 @@ local function makeDeb(pkg, list_path, deps, ver)
     local deb_pkg = nameToDebian(pkg)
     local dirname = ('%s_%s'):format(deb_pkg,
         protectVersion(ver))
-    local usr = '%s/usr/lib/mxe/%s_%s'
-    usr = usr:format(dirname, mxever, target)
+    local usr = '%s/usr/lib/mxe/%s'
+    usr = usr:format(dirname, target)
     os.execute(('mkdir -p %s'):format(usr))
     -- use tar to copy files with paths
     local cmd = 'tar -T %s --owner=0 --group=0 -cf - | ' ..
@@ -193,7 +192,7 @@ local function makeDeb(pkg, list_path, deps, ver)
     local control_fname = dirname .. '/DEBIAN/control'
     local control = io.open(control_fname, 'w')
     control:write(CONTROL:format(deb_pkg, protectVersion(ver),
-        deb_deps_str, mxever, pkg, target, pkg))
+        deb_deps_str, pkg, target, pkg))
     control:close()
     -- make .deb file
     local cmd = 'fakeroot -i deb.fakeroot dpkg-deb -b %s'
