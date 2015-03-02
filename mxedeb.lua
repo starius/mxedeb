@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 local target = os.getenv('MXE_TARGETS') or 'i686-pc-mingw32'
 local mxever = os.getenv('MXE_VERSION') or '2.23'
 local jobs = os.getenv('MXE_jobs') or '2'
