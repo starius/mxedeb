@@ -1,5 +1,15 @@
 #!/usr/bin/env lua
 
+-- This file is part of MXE.
+-- See index.html for further information.
+
+-- mxedeb, Build DEB packages from MXE packages
+
+-- Requirements: MXE, lua, tsort, fakeroot, dpkg-deb.
+-- Usage: lua tools/build-pkg.lua
+-- Packages are written to `*.tar.xz` files.
+-- Debian packages are written to `*.deb` files.
+
 local target = os.getenv('MXE_TARGETS') or 'i686-w64-mingw32.static'
 local jobs = os.getenv('MXE_jobs') or '2'
 local max_packages = tonumber(os.getenv('MXE_MAX_PACKAGES'))
