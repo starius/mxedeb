@@ -155,7 +155,8 @@ local CONTROL = [[Package: %s
 Version: %s
 Section: devel
 Priority: optional
-Architecture: all%s
+Architecture: all
+Depends: %s
 Maintainer: Boris Nagaev <bnagaev@gmail.com>
 Homepage: http://mxe.cc
 Description: MXE package %s for %s
@@ -182,15 +183,11 @@ local function makeDeb(pkg, list_path, deps, ver)
     local cmd = 'fakeroot -s deb.fakeroot tar -C %s -xf %s'
     os.execute(cmd:format(usr, tar_name))
     -- prepare dependencies
-    local deb_deps = {}
+    local deb_deps = {'mxe-requiremenets'}
     for _, dep in ipairs(deps) do
         table.insert(deb_deps, nameToDebian(dep))
     end
-    local deb_deps_str = ''
-    if #deb_deps > 0 then
-        local str = table.concat(deb_deps, ', ')
-        deb_deps_str = '\nDepends: ' .. str
-    end
+    local deb_deps_str = table.concat(deb_deps, ', ')
     -- make DEBIAN/control file
     os.execute(('mkdir -p %s/DEBIAN'):format(dirname))
     local control_fname = dirname .. '/DEBIAN/control'
@@ -250,7 +247,67 @@ local function buildForTarget(mxe_target)
     clean()
 end
 
+local function getMxeVersion()
+    local index_html = io.open 'index.html'
+    local text = index_html:read('*all')
+    index_html:close()
+    return text:match('Release ([^<]+)')
+end
+
+local MXE_REQUIREMENTS_CONTROL = [[Package: %s
+Version: %s
+Section: devel
+Priority: optional
+Architecture: %s
+Depends: %s
+Maintainer: Boris Nagaev <bnagaev@gmail.com>
+Homepage: http://mxe.cc
+Description: MXE requiremenets package
+ MXE (M cross environment) is a Makefile that compiles
+ a cross compiler and cross compiles many free libraries
+ such as SDL and Qt for various target platforms (MinGW).
+ .
+ This package depends on all Debian dependencies of MXE.
+ Other MXE packages depend on this package.
+]]
+
+local function makeMxeRequirementsDeb(arch)
+    local name = 'mxe-requiremenets'
+    local ver = getMxeVersion()
+    -- dependencies
+    local deps = {
+        'autoconf', 'automake', 'autopoint', 'bash', 'bison',
+        'bzip2', 'cmake', 'flex', 'gettext', 'git', 'g++',
+        'gperf', 'intltool', 'libffi-dev', 'libtool',
+        'libltdl-dev', 'libssl-dev', 'libxml-parser-perl',
+        'make', 'openssl', 'patch', 'perl', 'pkg-config',
+        'python', 'ruby', 'scons', 'sed', 'unzip', 'wget',
+        'xz-utils',
+    }
+    if arch == 'amd64' then
+        table.insert(deps, 'g++-multilib')
+        table.insert(deps, 'libc6-dev-i386')
+    end
+    local deps_str = table.concat(deps, ', ')
+    -- directory
+    local dirname = ('%s_%s_%s'):format(name, ver, arch)
+    -- make DEBIAN/control file
+    os.execute(('mkdir -p %s/DEBIAN'):format(dirname))
+    local control_fname = dirname .. '/DEBIAN/control'
+    local control = io.open(control_fname, 'w')
+    control:write(MXE_REQUIREMENTS_CONTROL:format(name,
+        ver, arch, deps_str))
+    control:close()
+    -- make .deb file
+    local cmd = 'fakeroot -i deb.fakeroot dpkg-deb -b %s'
+    os.execute(cmd:format(dirname))
+    -- cleanup
+    os.execute(('rm -fr %s deb.fakeroot'):format(dirname))
+end
+
 buildForTarget('i686-w64-mingw32.static')
 buildForTarget('x86_64-w64-mingw32.static')
 buildForTarget('i686-w64-mingw32.shared')
 buildForTarget('x86_64-w64-mingw32.shared')
+makeMxeRequirementsDeb('i386')
+makeMxeRequirementsDeb('amd64')
