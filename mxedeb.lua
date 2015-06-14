@@ -170,13 +170,17 @@ local function makeDeb(pkg, list_path, deps, ver)
     local deb_pkg = nameToDebian(pkg)
     local dirname = ('%s_%s'):format(deb_pkg,
         protectVersion(ver))
+    -- make .tar.xz file
+    local tar_name = dirname .. '.tar.xz'
+    local cmd = 'tar -T %s --owner=0 --group=0 -cJf %s'
+    os.execute(cmd:format(list_path, tar_name))
+    -- unpack .tar.xz to the path for Debian
     local usr = '%s/usr/lib/mxe/%s'
     usr = usr:format(dirname, target)
     os.execute(('mkdir -p %s'):format(usr))
     -- use tar to copy files with paths
-    local cmd = 'tar -T %s --owner=0 --group=0 -cf - | ' ..
-        'fakeroot -s deb.fakeroot tar -C %s -xf -'
-    os.execute(cmd:format(list_path, usr))
+    local cmd = 'fakeroot -s deb.fakeroot tar -C %s -xf %s'
+    os.execute(cmd:format(usr, tar_name))
     -- prepare dependencies
     local deb_deps = {}
     for _, dep in ipairs(deps) do
