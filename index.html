@@ -68,8 +68,19 @@
 <li>x86-64-w64-mingw32.shared (note that <code>_</code> replaced with <code>-</code>)</li>
 </ul>
 
+<p>Packages are installed to <code>/usr/lib/mxe/&lt;target&gt;/</code>. You can use this location as if it is source tree of MXE.</p>
+
+<p>For example, cross-compile CMake project:</p>
+
+<pre><code>$ target=i686-w64-mingw32.static
+$ mxedir=/usr/lib/mxe/$target/
+$ toolchain=$mxedir/usr/$target/share/cmake/mxe-conf.cmake
+$ cmake -DCMAKE_TOOLCHAIN_FILE=$toolchain project-source
+$ make
+</code></pre>
+
 <h3>
-<a id="how-to-build-packages" class="anchor" href="#how-to-build-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to build packages</h3>
+<a id="how-to-build-binary-packages-from-mxe-packages" class="anchor" href="#how-to-build-binary-packages-from-mxe-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to build binary packages from MXE packages</h3>
 
 <ol>
 <li>Install lua, tsort, fakeroot, dpkg-deb</li>
