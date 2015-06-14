@@ -11,7 +11,6 @@
 -- Debian packages are written to `*.deb` files.
 
 local target = os.getenv('MXE_TARGETS') or 'i686-w64-mingw32.static'
-local jobs = os.getenv('MXE_jobs') or '2'
 local max_packages = tonumber(os.getenv('MXE_MAX_PACKAGES'))
 
 -- based on http://lua-users.org/wiki/SplitJoin
@@ -131,8 +130,8 @@ end
 -- builds package, returns list of new files
 local function buildPackage(pkg)
     local files_before = findFiles()
-    local cmd = 'make %s MXE_TARGETS=%s --jobs=%s'
-    os.execute(cmd:format(pkg, target, jobs))
+    local cmd = 'make %s MXE_TARGETS=%s --jobs=1'
+    os.execute(cmd:format(pkg, target))
     local files_after = findFiles()
     local new_files = {}
     for file in pairs(files_after) do
