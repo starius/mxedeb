@@ -193,7 +193,7 @@ local function makeDeb(pkg, list_path, deps, ver)
     local cmd = 'fakeroot -s deb.fakeroot tar -C %s -xf %s'
     os.execute(cmd:format(usr, tar_name))
     -- prepare dependencies
-    local deb_deps = {'mxe-requiremenets'}
+    local deb_deps = {'mxe-requirements'}
     for _, dep in ipairs(deps) do
         table.insert(deb_deps, nameToDebian(dep))
     end
@@ -272,7 +272,7 @@ Architecture: %s
 Depends: %s
 Maintainer: Boris Nagaev <bnagaev@gmail.com>
 Homepage: http://mxe.cc
-Description: MXE requiremenets package
+Description: MXE requirements package
  MXE (M cross environment) is a Makefile that compiles
  a cross compiler and cross compiles many free libraries
  such as SDL and Qt for various target platforms (MinGW).
@@ -282,7 +282,7 @@ Description: MXE requiremenets package
 ]]
 
 local function makeMxeRequirementsDeb(arch)
-    local name = 'mxe-requiremenets'
+    local name = 'mxe-requirements'
     local ver = getMxeVersion()
     -- dependencies
     local deps = {
