@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
-local target = os.getenv('MXE_TARGETS') or 'i686-pc-mingw32'
+local target = os.getenv('MXE_TARGETS') or 'i686-w64-mingw32.static'
 local jobs = os.getenv('MXE_jobs') or '2'
 local max_packages = tonumber(os.getenv('MXE_MAX_PACKAGES'))
 
