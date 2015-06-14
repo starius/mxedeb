@@ -10,8 +10,9 @@
 -- Packages are written to `*.tar.xz` files.
 -- Debian packages are written to `*.deb` files.
 
-local target = os.getenv('MXE_TARGETS') or 'i686-w64-mingw32.static'
 local max_packages = tonumber(os.getenv('MXE_MAX_PACKAGES'))
+
+local target -- used by many functions
 
 -- based on http://lua-users.org/wiki/SplitJoin
 local function split(self, sep, nMax, plain)
