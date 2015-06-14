@@ -226,14 +226,27 @@ local function makeDebs(pkgs, pkg2deps, pkg2ver)
     end
 end
 
-local pkgs, pkg2deps, pkg2ver = getPkgs()
-local build_list = sortForBuild(pkgs, pkg2deps)
-if max_packages then
-    while #build_list > max_packages do
-        table.remove(build_list)
-    end
+local function clean()
+    local cmd = 'make clean MXE_TARGETS=%s'
+    os.execute(cmd:format(target))
 end
-local cmd = 'make clean MXE_TARGETS=%s'
-os.execute(cmd:format(target))
-buildPackages(build_list)
-makeDebs(build_list, pkg2deps, pkg2ver)
+
+local function buildForTarget(mxe_target)
+    target = mxe_target
+    local pkgs, pkg2deps, pkg2ver = getPkgs()
+    local build_list = sortForBuild(pkgs, pkg2deps)
+    if max_packages then
+        while #build_list > max_packages do
+            table.remove(build_list)
+        end
+    end
+    clean()
+    buildPackages(build_list)
+    makeDebs(build_list, pkg2deps, pkg2ver)
+    clean()
+end
+
+buildForTarget('i686-w64-mingw32.static')
+buildForTarget('x86_64-w64-mingw32.static')
+buildForTarget('i686-w64-mingw32.shared')
+buildForTarget('x86_64-w64-mingw32.shared')

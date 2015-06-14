@@ -1,16 +1,20 @@
-# mxedeb
-Build DEB packages from MXE packages
+# mxedeb, Build DEB packages from MXE packages
 
 ## Requirements
-See [Debian requirements of
-MXE](http://mxe.cc/#requirements-debian).
+
+See [Debian requirements of MXE][mxe-req].
 
 Requirements of mxedeb: lua, tsort, fakeroot, dpkg-deb.
 
-# Usage
-```bash
-$ git clone https://github.com/starius/mxedeb
-$ cd mxedeb
-$ ./build-all.sh
-```
-Debian packages `.deb` are written to `mxe*-*/*.deb` files.
+## Usage
+
+[Download MXE][mxe-download]
+
+Copy `mxedeb.lua` to root `mxe` dir.
+
+Run `lua mxedeb.lua`
+
+Debian packages `.deb` are written to `*.deb` files.
+
+[mxe-download]: http://mxe.cc/#download
+[mxe-req]: http://mxe.cc/#requirements-debian
