@@ -140,7 +140,6 @@ local function buildPackage(pkg)
             table.insert(new_files, file)
         end
     end
-    assert(#new_files > 0)
     return new_files
 end
 
@@ -222,11 +221,33 @@ local function saveFileList(pkg, list)
 end
 
 -- build all packages, save filelist to file #pkg.list
-local function buildPackages(pkgs)
-    for _, pkg in ipairs(pkgs) do
-        local files = buildPackage(pkg)
-        saveFileList(pkg, files)
+local function buildPackages(pkgs, pkg2deps)
+    local broken = {}
+    local unbroken = {}
+    local function isBroken(pkg)
+        for _, dep in ipairs(pkg2deps[pkg]) do
+            if broken[dep] then
+                return true
+            end
+        end
+        return false
     end
+    for _, pkg in ipairs(pkgs) do
+        if not isBroken(pkg) then
+            local files = buildPackage(pkg)
+            if #files > 0 then
+                saveFileList(pkg, files)
+                table.insert(unbroken, pkg)
+            else
+                -- broken package
+                broken[pkg] = true
+                print('The package is broken: ' .. pkg)
+            end
+        else
+            print('Broken dependency of a package: ' .. pkg)
+        end
+    end
+    return unbroken
 end
 
 local function makeDebs(pkgs, pkg2deps, pkg2ver)
@@ -252,8 +273,8 @@ local function buildForTarget(mxe_target)
         end
     end
     clean()
-    buildPackages(build_list)
-    makeDebs(build_list, pkg2deps, pkg2ver)
+    local unbroken = buildPackages(build_list, pkg2deps)
+    makeDebs(unbroken, pkg2deps, pkg2ver)
     clean()
 end
 
