@@ -12,6 +12,8 @@
 
 local max_packages = tonumber(os.getenv('MXE_MAX_PACKAGES'))
 
+local MXE_DIR = '/usr/lib/mxe'
+
 local target -- used by many functions
 
 -- based on http://lua-users.org/wiki/SplitJoin
@@ -192,8 +194,7 @@ local function makeDeb(pkg, list_path, deps, ver)
     local cmd = 'tar -T %s --owner=0 --group=0 -cJf %s'
     os.execute(cmd:format(list_path, tar_name))
     -- unpack .tar.xz to the path for Debian
-    local usr = '%s/usr/lib/mxe'
-    usr = usr:format(dirname)
+    local usr = dirname .. MXE_DIR
     os.execute(('mkdir -p %s'):format(usr))
     -- use tar to copy files with paths
     local cmd = 'fakeroot -s deb.fakeroot tar -C %s -xf %s'
@@ -343,8 +344,8 @@ local function makeMxeRequirementsDeb(arch)
     os.execute(('rm -fr %s deb.fakeroot'):format(dirname))
 end
 
-assert(trim(shell('pwd')) == '/usr/lib/mxe',
-    "Clone MXE to /usr/lib/mxe")
+assert(trim(shell('pwd')) == MXE_DIR,
+    "Clone MXE to " .. MXE_DIR)
 buildForTarget('i686-w64-mingw32.static')
 buildForTarget('x86_64-w64-mingw32.static')
 buildForTarget('i686-w64-mingw32.shared')
