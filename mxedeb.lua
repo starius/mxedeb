@@ -45,6 +45,13 @@ local function trim(str)
     return text
 end
 
+local function shell(cmd)
+    local f = io.popen(cmd, 'r')
+    local text = f:read('*all')
+    f:close()
+    return text
+end
+
 -- return several table describing packages
 -- * list of packages
 -- * map from package to list of deps
@@ -336,6 +343,8 @@ local function makeMxeRequirementsDeb(arch)
     os.execute(('rm -fr %s deb.fakeroot'):format(dirname))
 end
 
+assert(trim(shell('pwd')) == '/usr/lib/mxe',
+    "Clone MXE to /usr/lib/mxe")
 buildForTarget('i686-w64-mingw32.static')
 buildForTarget('x86_64-w64-mingw32.static')
 buildForTarget('i686-w64-mingw32.shared')
