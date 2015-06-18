@@ -192,8 +192,8 @@ local function makeDeb(pkg, list_path, deps, ver)
     local cmd = 'tar -T %s --owner=0 --group=0 -cJf %s'
     os.execute(cmd:format(list_path, tar_name))
     -- unpack .tar.xz to the path for Debian
-    local usr = '%s/usr/lib/mxe/%s'
-    usr = usr:format(dirname, target)
+    local usr = '%s/usr/lib/mxe'
+    usr = usr:format(dirname)
     os.execute(('mkdir -p %s'):format(usr))
     -- use tar to copy files with paths
     local cmd = 'fakeroot -s deb.fakeroot tar -C %s -xf %s'
