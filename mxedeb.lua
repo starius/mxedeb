@@ -232,16 +232,16 @@ end
 local function buildPackages(pkgs, pkg2deps)
     local broken = {}
     local unbroken = {}
-    local function isBroken(pkg)
+    local function brokenDep(pkg)
         for _, dep in ipairs(pkg2deps[pkg]) do
             if broken[dep] then
-                return true
+                return dep
             end
         end
         return false
     end
     for _, pkg in ipairs(pkgs) do
-        if not isBroken(pkg) then
+        if not brokenDep(pkg) then
             local files = buildPackage(pkg)
             if #files > 0 then
                 saveFileList(pkg, files)
@@ -252,7 +252,8 @@ local function buildPackages(pkgs, pkg2deps)
                 print('The package is broken: ' .. pkg)
             end
         else
-            print('Broken dependency of a package: ' .. pkg)
+            local msg = 'Package %s depends on broken %s'
+            print(msg:format(pkg, brokenDep(pkg)))
         end
     end
     return unbroken
