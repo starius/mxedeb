@@ -128,7 +128,7 @@ end
 -- return set of all filepaths under ./usr/
 local function findFiles()
     local files = {}
-    local find = io.popen('find usr -type f', 'r')
+    local find = io.popen('find usr -type f -or -type l', 'r')
     for line in find:lines() do
         local file = trim(line)
         files[file] = true
