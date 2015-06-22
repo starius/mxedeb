@@ -4,6 +4,7 @@
 -- See index.html for further information.
 
 -- mxedeb, Build DEB packages from MXE packages
+-- Instructions: http://mxe.redjohn.tk
 
 -- Requirements: MXE, lua, tsort, fakeroot, dpkg-deb.
 -- Usage: lua tools/build-pkg.lua
