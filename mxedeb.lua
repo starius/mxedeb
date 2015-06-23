@@ -55,7 +55,7 @@ local function shell(cmd)
     return text
 end
 
--- return several table describing packages
+-- return several tables describing packages
 -- * list of packages
 -- * map from package to list of deps
 -- * map from package to version of package
