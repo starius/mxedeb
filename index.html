@@ -31,20 +31,20 @@
 
 <p><code>tar.xz</code> packages can be downloaded from the following location:</p>
 
-<p><a href="http://mxe.redjohn.tk/repos/tar/">http://mxe.redjohn.tk/repos/tar/</a></p>
+<p><a href="http://pkg.mxe.cc/repos/tar/">http://pkg.mxe.cc/repos/tar/</a></p>
 
 <h3>
 <a id="debian-packages" class="anchor" href="#debian-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Debian packages</h3>
 
 <p>To install Debian packages, add the location of our APT to your <code>/etc/apt/sources</code>:</p>
 
-<pre><code># echo "deb http://mxe.redjohn.tk/repos/apt/debian wheezy main" &gt; \
+<pre><code># echo "deb http://pkg.mxe.cc/repos/apt/debian wheezy main" &gt; \
    /etc/apt/sources.list.d/mxeapt.list
 </code></pre>
 
 <p>Then add our GPG key to APT:</p>
 
-<pre><code># wget -O - http://mxe.redjohn.tk/repos/apt/conf/mxeapt.gpg | apt-key add -
+<pre><code># apt-key adv --keyserver x-hkp://keys.gnupg.net --recv-keys D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB
 </code></pre>
 
 <p>Update APT cache:</p>
@@ -83,15 +83,7 @@ $ make
 <h3>
 <a id="how-to-build-binary-packages-from-mxe-packages" class="anchor" href="#how-to-build-binary-packages-from-mxe-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to build binary packages from MXE packages</h3>
 
-<ol>
-<li>Install lua, tsort, fakeroot, dpkg-deb</li>
-<li>Clone <code>mxe</code> to local directory.</li>
-<li><code>lua tools/build-pkg.lua</code></li>
-<li>Packages are written to <code>*.tar.xz</code> files.</li>
-<li>Debian packages are written to <code>*.deb</code> files.</li>
-</ol>
-
-<p>To convert a set of <code>.deb</code> files to an APT, you can <a href="https://wiki.debian.org/SettingUpSignedAptRepositoryWithReprepro">use reprepro</a></p>
+<p>See <a href="https://github.com/starius/mxe-apt">https://github.com/starius/mxe-apt</a></p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/starius/mxedeb">MXE - build-pkg</a> is maintained by <a href="https://github.com/starius">starius</a>.</span>
