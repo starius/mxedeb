@@ -79,8 +79,7 @@ You can use this location as MXE source tree.</p>
 
 <pre><code>$ target=i686-w64-mingw32.static
 $ mxedir=/usr/lib/mxe/
-$ toolchain=$mxedir/usr/$target/share/cmake/mxe-conf.cmake
-$ cmake -DCMAKE_TOOLCHAIN_FILE=$toolchain project-source
+$ $mxedir/usr/bin/$target-cmake project-source
 $ make
 </code></pre>
 
