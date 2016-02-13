@@ -20,14 +20,14 @@
 
     <section class="main-content">
       <h3>
-<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h3>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h3>
 
 <p>MXE (M cross environment) is a Makefile that compiles a cross compiler and cross compiles many free libraries such as SDL and Qt. Thus, it provides a nice cross compiling environment for various target platforms. Visit <a href="http://mxe.cc/">MXE site</a> to learn more about MXE.</p>
 
 <p>This project aims to provide binary packages built from MXE packages. Packages can be downloaded as <code>tar.xz</code> files or installed as Debian packages from our APT.</p>
 
 <h3>
-<a id="tarxz-packages" class="anchor" href="#tarxz-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>tar.xz packages</h3>
+<a id="tarxz-packages" class="anchor" href="#tarxz-packages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>tar.xz packages</h3>
 
 <p><code>tar.xz</code> packages can be downloaded from the following location:</p>
 
@@ -38,7 +38,7 @@
 <p><a href="http://pkg.mxe.cc/releases/">http://pkg.mxe.cc/releases/</a></p>
 
 <h3>
-<a id="debian-packages" class="anchor" href="#debian-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Debian packages</h3>
+<a id="debian-packages" class="anchor" href="#debian-packages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Debian packages</h3>
 
 <p>To install Debian packages, add the location of our APT to your <code>/etc/apt/sources</code>:</p>
 
@@ -48,7 +48,7 @@
 
 <p>Then add our GPG key to APT:</p>
 
-<pre><code># apt-key adv --keyserver x-hkp://keys.gnupg.net --recv-keys D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB
+<pre><code># apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB
 </code></pre>
 
 <p>Update APT cache:</p>
@@ -84,12 +84,12 @@ $ make
 </code></pre>
 
 <h3>
-<a id="use-in-travis-continuous-integration" class="anchor" href="#use-in-travis-continuous-integration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use in Travis Continuous Integration</h3>
+<a id="use-in-travis-continuous-integration" class="anchor" href="#use-in-travis-continuous-integration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Use in Travis Continuous Integration</h3>
 
 <p>Apply the steps above in your <code>.travis.yml</code>. <a href="https://docs.travis-ci.com/user/deployment/releases">Deploying build artefacts</a> from Travis to Github releases is also a good idea. You can use <a href="https://github.com/zer0main/battleship">https://github.com/zer0main/battleship</a> as an example.</p>
 
 <h3>
-<a id="how-to-build-binary-packages-from-mxe-packages" class="anchor" href="#how-to-build-binary-packages-from-mxe-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to build binary packages from MXE packages</h3>
+<a id="how-to-build-binary-packages-from-mxe-packages" class="anchor" href="#how-to-build-binary-packages-from-mxe-packages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to build binary packages from MXE packages</h3>
 
 <p>See <a href="https://github.com/mxe/mxe-apt">https://github.com/mxe/mxe-apt</a></p>
 
